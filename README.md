@@ -2,6 +2,8 @@
 Clean architecture, Retrofit 2, DI (Koin), ViewModel, Live Data, Coroutines, Room, Push Notifications, Google maps, Deep link,  Glide, Multimodularity
 In this application, I take data from the server, so it is not possible to add products to the cart or favorites in it 
 Main screen API - https://run.mocky.io/v3/654bd15e-b121-49ba-a588-960956b15175
+![image](https://user-images.githubusercontent.com/88924919/169587780-23200906-d23b-46fa-8cf3-d9c2b102c9a1.png)
+
 
 Detail screen API - https://run.mocky.io/v3/6c14c560-15c6-4248-b9d2-b4508df7d4f5 image image
 
