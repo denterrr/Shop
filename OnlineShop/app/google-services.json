@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "461472474217",
+    "project_id": "online-shop-8bce0",
+    "storage_bucket": "online-shop-8bce0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461472474217:android:d58da9c80ce0521600aef8",
+        "android_client_info": {
+          "package_name": "den.ter.onlineshop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461472474217-7of7evoa9ln76tfdrm7atekkif7ivp1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEkQEk7xqxj1Sw40enYowgPWRyoOQ80eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461472474217-7of7evoa9ln76tfdrm7atekkif7ivp1u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

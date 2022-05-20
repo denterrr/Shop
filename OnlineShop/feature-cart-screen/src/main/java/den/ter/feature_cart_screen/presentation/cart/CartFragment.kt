@@ -10,10 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import den.ter.feature_cart_screen.databinding.FragmentCartBinding
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CartFragment : Fragment() {
@@ -48,20 +50,48 @@ class CartFragment : Fragment() {
     }
 
     private fun init() {
-        if (isOnline(requireContext())) {
-            loadData()
-            binding.cardView.visibility = View.VISIBLE
-            binding.tvConnectionLost3.visibility = View.GONE
-        } else {
-            binding.cardView.visibility = View.GONE
-            binding.tvConnectionLost3.visibility = View.VISIBLE
-        }
+        viewModel.getCartDb().observe(viewLifecycleOwner, Observer {
+            if (it == null) {
+                if (isOnline(requireContext())) {
+                    loadData()
+                    binding.cardView.visibility = View.VISIBLE
+                    binding.tvConnectionLost3.visibility = View.GONE
+                } else {
+                    binding.cardView.visibility = View.GONE
+                    binding.tvConnectionLost3.visibility = View.VISIBLE
+                }
+            }else{
+                if (isOnline(requireContext())) {
+                    loadDbData()
+                    binding.cardView.visibility = View.VISIBLE
+                    binding.tvConnectionLost3.visibility = View.GONE
+                } else {
+                    binding.cardView.visibility = View.GONE
+                    binding.tvConnectionLost3.visibility = View.VISIBLE
+                }
+            }
+        })
+
     }
 
     @SuppressLint("SetTextI18n")
     private fun loadData() {
         viewModel.getCart()
         viewModel.resp.observe(viewLifecycleOwner, Observer {
+            lifecycleScope.launch {
+                viewModel.insert(it)
+            }
+            adapter.setList(it.basket)
+            binding.apply {
+                total.text = "$${it.total}"
+                delivery.text = it.delivery.toString()
+            }
+        })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun loadDbData() {
+        viewModel.getCartDb().observe(viewLifecycleOwner, Observer {
             adapter.setList(it.basket)
             binding.apply {
                 total.text = "$${it.total}"

@@ -44,8 +44,17 @@
         <entry key="..\:/OnlineShop/app/src/main/res/menu/bottom_items.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/drawable-v24/blue_but.xml" value="0.1" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/drawable/blue_but.xml" value="0.1" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/drawable/ic_fullheartt.xml" value="0.1135" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/layout/fragment_gmap.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/layout/fragment_maps.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/layout/fragment_start.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/app/src/main/res/layout/notification.xml" value="0.2" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable/ic_done.xml" value="0.1135" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable/ic_fullheart.xml" value="0.1135" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable/ic_health.xml" value="0.1135" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable/ic_heart.xml" value="0.1135" />
+        <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable/ic_heartmain.xml" value="0.1135" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/core/src/main/res/drawable/ic_qr.xml" value="0.2255" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/feature-cart-screen/src/main/res/drawable/ic_qr.xml" value="0.1895" />
         <entry key="..\:/Users/denter/AndroidStudioProjects/OnlineShop/feature-details-screen/src/main/res/drawable/ic_qr.xml" value="0.2195" />

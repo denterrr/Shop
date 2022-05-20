@@ -11,19 +11,23 @@ val appModule = module {
     viewModel<StartViewModel>{
         StartViewModel(
             getBestAndHotsUseCase = get(),
-            getCartCountUseCase = get()
+            getCartCountUseCase = get(),
+            getBestUseCase = get(),
+            getHotUseCase = get()
         )
     }
 
     viewModel<CartViewModel>{
         CartViewModel(
-            getCartUseCase = get()
+            getCartUseCase = get(),
+            getCartDbUseCase = get()
         )
     }
 
     viewModel<ProductDetailViewModel>{
         ProductDetailViewModel(
-            getDetailsUseCase = get()
+            getDetailsUseCase = get(),
+            getDetailsDbUseCase = get()
         )
     }
 }

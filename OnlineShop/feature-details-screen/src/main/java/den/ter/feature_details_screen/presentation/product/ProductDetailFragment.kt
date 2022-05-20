@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ import den.ter.core.models.besthotmodel.BestSeller
 import den.ter.feature_details_screen.R.layout.*
 import den.ter.core.R
 import den.ter.feature_details_screen.databinding.FragmentProductDetailBinding
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.abs
 
@@ -103,18 +105,53 @@ class ProductDetailFragment : Fragment() {
     }
 
     private fun init() {
-        if (isOnline(requireContext())) {
-            loadData()
-            binding.tvConnectionLost2.visibility = View.GONE
-        } else {
-            binding.tvConnectionLost2.visibility = View.VISIBLE
-        }
+        viewModel.getDetailsDb().observe(viewLifecycleOwner, Observer {
+            if (it == null) {
+                if (isOnline(requireContext())) {
+                    loadData()
+                    binding.tvConnectionLost2.visibility = View.GONE
+                } else {
+                    binding.tvConnectionLost2.visibility = View.VISIBLE
+                }
+            } else {
+                if (isOnline(requireContext())) {
+                    loadDbData()
+                    binding.tvConnectionLost2.visibility = View.GONE
+                } else {
+                    binding.tvConnectionLost2.visibility = View.VISIBLE
+                }
+            }
+        })
+
     }
 
     @SuppressLint("SetTextI18n")
     private fun loadData() {
         viewModel.getDetails()
         viewModel.resp.observe(viewLifecycleOwner, Observer {
+            lifecycleScope.launch {
+                viewModel.insert(it)
+            }
+            mViewPagerAdapter.setList(it.images)
+            binding.apply {
+                camera.text = it.camera
+                sd.text = "${it.sd}  "
+                ssd.text = "${it.ssd}  "
+                name.text = it.title
+                price.text = "$${it.price}"
+                if (it.isFavorites) favBut.setImageResource(R.drawable.ic_fullheart)
+                color1.setCardBackgroundColor(Color.parseColor(it.color[0]))
+                color2.setCardBackgroundColor(Color.parseColor(it.color[1]))
+                tvCapacity1.text = "${it.capacity[0]} GB"
+                tvCapacity2.text = "${it.capacity[1]} GB"
+            }
+
+        })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun loadDbData() {
+        viewModel.getDetailsDb().observe(viewLifecycleOwner, Observer {
             mViewPagerAdapter.setList(it.images)
             binding.apply {
                 camera.text = it.camera

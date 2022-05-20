@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +26,7 @@ import den.ter.feature_start_screen.databinding.FragmentStartBinding
 import den.ter.feature_start_screen.presentation.start.adapters.BestAdapter
 import den.ter.feature_start_screen.presentation.start.adapters.CategoryAdapter
 import den.ter.feature_start_screen.presentation.start.adapters.HotAdapter
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StartFragment : Fragment() {
@@ -36,7 +39,6 @@ class StartFragment : Fragment() {
     lateinit var adapter_hot: HotAdapter
     lateinit var rv_best: RecyclerView
     lateinit var adapter_best: BestAdapter
-    lateinit var spinner: Spinner
     lateinit var spinnerBrand: Spinner
     lateinit var spinnerPrice: Spinner
     lateinit var spinnerSize: Spinner
@@ -47,14 +49,9 @@ class StartFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentStartBinding.inflate(layoutInflater, container, false)
-        spinner = binding.spinner
         spinnerBrand = binding.spinnerBrand
         spinnerPrice = binding.spinnerPrice
         spinnerSize = binding.spinnerSize
-        val spinnerAdapter = ArrayAdapter.createFromResource(
-            requireContext(), R.array.cities,
-            spinner_item
-        )
         val spinnerBrandAdapter = ArrayAdapter.createFromResource(
             requireContext(), R.array.brands,
             spinner_item
@@ -67,11 +64,9 @@ class StartFragment : Fragment() {
             requireContext(), R.array.sizes,
             spinner_item
         )
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerBrandAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPriceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = spinnerAdapter
         spinnerBrand.adapter = spinnerBrandAdapter
         spinnerPrice.adapter = spinnerPriceAdapter
         spinnerSize.adapter = spinnerSizeAdapter
@@ -106,8 +101,16 @@ class StartFragment : Fragment() {
 
         }
 
+        binding.geo.setOnClickListener {
+            goMap()
+        }
+        binding.tvCity.setOnClickListener {
+            goMap()
+        }
+
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -115,10 +118,22 @@ class StartFragment : Fragment() {
     }
 
     private fun init() {
-        if (isOnline(requireContext())) {
-            loadData()
-            binding.tvConnectionLost.visibility = View.GONE
-        } else binding.tvConnectionLost.visibility = View.VISIBLE
+
+
+        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+            if (it.isEmpty()) {
+                if (isOnline(requireContext())) {
+                    loadData()
+                    binding.tvConnectionLost.visibility = View.GONE
+                } else binding.tvConnectionLost.visibility = View.VISIBLE
+            } else {
+                if (isOnline(requireContext())) {
+                    loadDbData()
+                    binding.tvConnectionLost.visibility = View.GONE
+                } else binding.tvConnectionLost.visibility = View.VISIBLE
+            }
+        })
+
 
         binding.filter.setOnClickListener {
             val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
@@ -149,8 +164,31 @@ class StartFragment : Fragment() {
     private fun loadData() {
         viewModel.getBestsAndHots()
         viewModel.resp.observe(viewLifecycleOwner, Observer {
+            lifecycleScope.launch {
+                viewModel.insertBest(it.best_seller)
+                viewModel.insertHot(it.home_store)
+            }
             adapter_best.setList(it.best_seller)
             adapter_hot.setList(it.home_store)
+        })
+        adapter_category.update()
+
+        viewModel.getCart()
+        viewModel.respCart.observe(viewLifecycleOwner, Observer {
+            val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+            val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
+            badge?.isVisible = true
+            badge?.number = it.basket.size
+
+        })
+    }
+
+    private fun loadDbData() {
+        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+            adapter_best.setList(it)
+        })
+        viewModel.getHot().observe(viewLifecycleOwner, Observer {
+            adapter_hot.setList(it)
         })
         adapter_category.update()
 
@@ -189,8 +227,8 @@ class StartFragment : Fragment() {
     ) {
         var name = brand
         if (brand == "All") name = "a"
-        viewModel.resp.observe(viewLifecycleOwner, Observer {
-            val listFiltered = it.best_seller.filter {
+        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+            val listFiltered = it.filter {
                 (it.title.startsWith(name, true) || it.title.contains(name, true)) &&
                         it.price_without_discount >= minPrice.toInt() &&
                         it.price_without_discount <= maxPrice.toInt()
@@ -215,4 +253,10 @@ class StartFragment : Fragment() {
         }
     }
 
+    private fun goMap() {
+        val navcon = findNavController()
+        navcon.navigate(R.id.action_startFragment_to_mapsFragment)
+    }
+
 }
+

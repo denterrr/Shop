@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification">Notification</string>
+    <string name="check_your_cart">Check your cart</string>
+    <string name="seekme">Найти меня</string>
+</resources>
