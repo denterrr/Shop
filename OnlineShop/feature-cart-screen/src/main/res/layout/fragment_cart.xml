@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_main"
-    tools:context=".presentation.screens.cart.CartFragment">
+    tools:context=".presentation.cart.CartFragment">
 
     <ImageButton
         android:id="@+id/back_button"
@@ -21,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_geo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"

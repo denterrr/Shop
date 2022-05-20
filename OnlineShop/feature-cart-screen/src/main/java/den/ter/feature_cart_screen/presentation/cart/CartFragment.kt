@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import den.ter.feature_cart_screen.R
 import den.ter.feature_cart_screen.databinding.FragmentCartBinding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,8 +42,15 @@ class CartFragment : Fragment() {
             val navController = findNavController()
             navController.navigateUp()
         }
+        binding.geoButton.setOnClickListener {
+            goMap()
+        }
+        binding.tvGeo.setOnClickListener {
+            goMap()
+        }
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -112,4 +120,8 @@ class CartFragment : Fragment() {
     }
 
 
+    private fun goMap() {
+        val navcon = findNavController()
+        navcon.navigate(den.ter.core.R.id.action_cartFragment_to_mapsFragment)
+    }
 }
