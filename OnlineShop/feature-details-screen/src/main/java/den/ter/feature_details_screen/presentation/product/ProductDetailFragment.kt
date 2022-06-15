@@ -21,16 +21,21 @@ import androidx.viewpager2.widget.ViewPager2
 import den.ter.core.models.besthotmodel.BestSeller
 import den.ter.feature_details_screen.R.layout.*
 import den.ter.core.R
+import den.ter.core.di.DaggerCoreComponent
 import den.ter.feature_details_screen.databinding.FragmentProductDetailBinding
+import den.ter.feature_details_screen.di.DaggerDetailsComponent
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 import kotlin.math.abs
 
 
 class ProductDetailFragment : Fragment() {
     val PRODUCT_KEY = "PRODUCT_KEY"
 
-    private val viewModel: ProductDetailViewModel by viewModel<ProductDetailViewModel>()
+    @Inject
+    lateinit var viewModel: ProductDetailViewModel
+
     lateinit var binding: FragmentProductDetailBinding
     lateinit var product: BestSeller
     lateinit var navController: NavController
@@ -42,6 +47,10 @@ class ProductDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        val comp = DaggerDetailsComponent.builder()
+            .coreComponent(DaggerCoreComponent.create())
+            .build()
+        comp.inject(this)
         binding = FragmentProductDetailBinding.inflate(layoutInflater, container, false)
         product = arguments?.getSerializable(PRODUCT_KEY) as BestSeller
         mViewPager = binding.viewPager
@@ -105,23 +114,24 @@ class ProductDetailFragment : Fragment() {
     }
 
     private fun init() {
-        viewModel.getDetailsDb().observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                if (isOnline(requireContext())) {
-                    loadData()
-                    binding.tvConnectionLost2.visibility = View.GONE
-                } else {
-                    binding.tvConnectionLost2.visibility = View.VISIBLE
-                }
-            } else {
-                if (isOnline(requireContext())) {
-                    loadDbData()
-                    binding.tvConnectionLost2.visibility = View.GONE
-                } else {
-                    binding.tvConnectionLost2.visibility = View.VISIBLE
-                }
-            }
-        })
+//        viewModel.getDetailsDb().observe(viewLifecycleOwner, Observer {
+//            if (it == null) {
+//                if (isOnline(requireContext())) {
+//                    loadData()
+//                    binding.tvConnectionLost2.visibility = View.GONE
+//                } else {
+//                    binding.tvConnectionLost2.visibility = View.VISIBLE
+//                }
+//            } else {
+//                if (isOnline(requireContext())) {
+//                    loadDbData()
+//                    binding.tvConnectionLost2.visibility = View.GONE
+//                } else {
+//                    binding.tvConnectionLost2.visibility = View.VISIBLE
+//                }
+//            }
+//        })
+        loadData()
 
     }
 
@@ -130,7 +140,7 @@ class ProductDetailFragment : Fragment() {
         viewModel.getDetails()
         viewModel.resp.observe(viewLifecycleOwner, Observer {
             lifecycleScope.launch {
-                viewModel.insert(it)
+//                viewModel.insert(it)
             }
             mViewPagerAdapter.setList(it.images)
             binding.apply {
@@ -149,25 +159,25 @@ class ProductDetailFragment : Fragment() {
         })
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun loadDbData() {
-        viewModel.getDetailsDb().observe(viewLifecycleOwner, Observer {
-            mViewPagerAdapter.setList(it.images)
-            binding.apply {
-                camera.text = it.camera
-                sd.text = "${it.sd}  "
-                ssd.text = "${it.ssd}  "
-                name.text = it.title
-                price.text = "$${it.price}"
-                if (it.isFavorites) favBut.setImageResource(R.drawable.ic_fullheart)
-                color1.setCardBackgroundColor(Color.parseColor(it.color[0]))
-                color2.setCardBackgroundColor(Color.parseColor(it.color[1]))
-                tvCapacity1.text = "${it.capacity[0]} GB"
-                tvCapacity2.text = "${it.capacity[1]} GB"
-            }
-
-        })
-    }
+//    @SuppressLint("SetTextI18n")
+//    private fun loadDbData() {
+//        viewModel.getDetailsDb().observe(viewLifecycleOwner, Observer {
+//            mViewPagerAdapter.setList(it.images)
+//            binding.apply {
+//                camera.text = it.camera
+//                sd.text = "${it.sd}  "
+//                ssd.text = "${it.ssd}  "
+//                name.text = it.title
+//                price.text = "$${it.price}"
+//                if (it.isFavorites) favBut.setImageResource(R.drawable.ic_fullheart)
+//                color1.setCardBackgroundColor(Color.parseColor(it.color[0]))
+//                color2.setCardBackgroundColor(Color.parseColor(it.color[1]))
+//                tvCapacity1.text = "${it.capacity[0]} GB"
+//                tvCapacity2.text = "${it.capacity[1]} GB"
+//            }
+//
+//        })
+//    }
 
     private fun isOnline(ctx: Context): Boolean {
         val cm = ctx.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
