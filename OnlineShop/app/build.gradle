@@ -96,6 +96,19 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
 
 
+    //moxy
+    def moxyVersion = "2.2.2"
+    implementation "com.github.moxy-community:moxy:$moxyVersion"
+    kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
+    implementation "com.github.moxy-community:moxy-android:$moxyVersion"
+    implementation "com.github.moxy-community:moxy-app-compat:$moxyVersion"
+    implementation "com.github.moxy-community:moxy-ktx:$moxyVersion"
+
+
+    //dagger
+    implementation 'com.google.dagger:dagger:2.42'
+    kapt("com.google.dagger:dagger-compiler:2.42")
+
 
     implementation project(path: ':core')
     implementation project(path: ':feature-cart-screen')

@@ -2,17 +2,19 @@ package den.ter.feature_start_screen.data
 
 import den.ter.core.models.besthotmodel.BestAndHotModel
 import den.ter.core.models.cartmodel.CartModel
-import den.ter.feature_start_screen.data.api.StartRetrofitInstance
+import den.ter.feature_start_screen.data.api.StartApiService
+
 
 import den.ter.feature_start_screen.domain.repository.StartRepositoryInterface
 import retrofit2.Response
+import javax.inject.Inject
 
-class StartRepository(private val retrofit: StartRetrofitInstance) : StartRepositoryInterface {
+class StartRepository @Inject constructor(private val api: StartApiService) : StartRepositoryInterface {
     override suspend fun getBestAndHots(): Response<BestAndHotModel> {
-        return retrofit.apiService.getBestAndHots()
+        return api.getBestAndHots()
     }
 
     override suspend fun getCart(): Response<CartModel> {
-        return retrofit.apiService.getCart()
+        return api.getCart()
     }
 }

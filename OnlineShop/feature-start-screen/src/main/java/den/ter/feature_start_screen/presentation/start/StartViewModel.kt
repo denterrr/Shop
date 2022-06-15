@@ -15,12 +15,13 @@ import den.ter.feature_start_screen.domain.usecase.GetCartCountUseCase
 import den.ter.feature_start_screen.domain.usecase.GetHotUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StartViewModel(
+class StartViewModel @Inject constructor(
     private val getBestAndHotsUseCase: GetBestAndHotsUseCase,
     private val getCartCountUseCase: GetCartCountUseCase,
-    private val getBestUseCase: GetBestUseCase,
-    private val getHotUseCase: GetHotUseCase
+//    private val getBestUseCase: GetBestUseCase,
+//    private val getHotUseCase: GetHotUseCase
 ) : ViewModel() {
 
     private val _resp = MutableLiveData<BestAndHotModel>()
@@ -54,17 +55,17 @@ class StartViewModel(
         }
     }
 
-    fun getBest() =   getBestUseCase.execute()
-
-
-    suspend fun insertBest(list: List<BestSeller>) = viewModelScope.launch {
-        getBestUseCase.insert(list)
-
-    }
-
-    fun getHot() = getHotUseCase.execute()
-
-    suspend fun insertHot(list: List<HomeStore>) = viewModelScope.launch {
-        getHotUseCase.insert(list)
-    }
+//    fun getBest() =   getBestUseCase.execute()
+//
+//
+//    suspend fun insertBest(list: List<BestSeller>) = viewModelScope.launch {
+//        getBestUseCase.insert(list)
+//
+//    }
+//
+//    fun getHot() = getHotUseCase.execute()
+//
+//    suspend fun insertHot(list: List<HomeStore>) = viewModelScope.launch {
+//        getHotUseCase.insert(list)
+//    }
 }

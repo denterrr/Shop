@@ -16,7 +16,9 @@ import den.ter.core.R
 import kotlinx.android.synthetic.main.product_item.view.*
 
 
-class BestAdapter(private val context: Context, private val navController: NavController) : RecyclerView.Adapter<BestAdapter.BestViewHolder>() {
+class BestAdapter(private val context: Context,
+// private val navController: NavController
+    ) : RecyclerView.Adapter<BestAdapter.BestViewHolder>() {
 
     val PRODUCT_KEY = "PRODUCT_KEY"
     var listBest = emptyList<BestSeller>()
@@ -56,16 +58,16 @@ class BestAdapter(private val context: Context, private val navController: NavCo
         notifyDataSetChanged()
     }
 
-    override fun onViewAttachedToWindow(holder: BestViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.itemView.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putSerializable(PRODUCT_KEY, listBest[holder.adapterPosition])
-            navController.navigate(R.id.action_startFragment_to_productDetailFragment, bundle)
-        }
-    }
-
-    override fun onViewDetachedFromWindow(holder: BestViewHolder) {
-        holder.itemView.setOnClickListener(null)
-    }
+//    override fun onViewAttachedToWindow(holder: BestViewHolder) {
+//        super.onViewAttachedToWindow(holder)
+//        holder.itemView.setOnClickListener {
+//            val bundle = Bundle()
+//            bundle.putSerializable(PRODUCT_KEY, listBest[holder.adapterPosition])
+//            navController.navigate(R.id.action_startFragment_to_productDetailFragment, bundle)
+//        }
+//    }
+//
+//    override fun onViewDetachedFromWindow(holder: BestViewHolder) {
+//        holder.itemView.setOnClickListener(null)
+//    }
 }

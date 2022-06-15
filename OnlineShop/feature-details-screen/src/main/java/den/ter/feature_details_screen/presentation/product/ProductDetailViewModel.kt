@@ -11,10 +11,11 @@ import den.ter.feature_details_screen.domain.usecase.GetDetailsUseCase
 
 
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProductDetailViewModel(
-    private val getDetailsUseCase: GetDetailsUseCase,
-    private val getDetailsDbUseCase: GetDetailsDbUseCase
+class ProductDetailViewModel @Inject constructor(
+    private val getDetailsUseCase: GetDetailsUseCase
+//    private val getDetailsDbUseCase: GetDetailsDbUseCase
 ) : ViewModel() {
 
     private val _resp = MutableLiveData<DetailModel>()
@@ -32,10 +33,10 @@ class ProductDetailViewModel(
         }
     }
 
-    fun getDetailsDb() = getDetailsDbUseCase.execute()
-
-
-    suspend fun insert(model: DetailModel) = viewModelScope.launch {
-        getDetailsDbUseCase.insert(model)
-    }
+//    fun getDetailsDb() = getDetailsDbUseCase.execute()
+//
+//
+//    suspend fun insert(model: DetailModel) = viewModelScope.launch {
+//        getDetailsDbUseCase.insert(model)
+//    }
 }
