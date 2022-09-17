@@ -10,11 +10,9 @@ import den.ter.core.models.detailmodel.DetailModel
 import den.ter.feature_cart_screen.domain.usecase.GetCartDbUseCase
 import den.ter.feature_cart_screen.domain.usecase.GetCartUseCase
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class CartViewModel @Inject constructor(private val getCartUseCase: GetCartUseCase)
-//    private val getCartDbUseCase: GetCartDbUseCase)
-   : ViewModel() {
+class CartViewModel(private val getCartUseCase: GetCartUseCase,
+    private val getCartDbUseCase: GetCartDbUseCase) : ViewModel() {
 
     private val _resp = MutableLiveData<CartModel>()
 
@@ -32,10 +30,10 @@ class CartViewModel @Inject constructor(private val getCartUseCase: GetCartUseCa
         }
     }
 
-//    fun getCartDb() = getCartDbUseCase.execute()
-//
-//
-//    suspend fun insert(model: CartModel) = viewModelScope.launch {
-//        getCartDbUseCase.insert(model)
-//    }
+    fun getCartDb() = getCartDbUseCase.execute()
+
+
+    suspend fun insert(model: CartModel) = viewModelScope.launch {
+        getCartDbUseCase.insert(model)
+    }
 }

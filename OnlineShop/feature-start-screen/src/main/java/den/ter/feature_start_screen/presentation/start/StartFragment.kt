@@ -3,7 +3,6 @@ package den.ter.feature_start_screen.presentation.start
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,48 +20,18 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import den.ter.feature_start_screen.R.layout.*
 import den.ter.core.R
-import den.ter.core.di.CoreComponent
-import den.ter.core.di.DaggerCoreComponent
-import den.ter.core.models.besthotmodel.BestAndHotModel
-import den.ter.core.models.cartmodel.CartModel
 import den.ter.feature_start_screen.databinding.FragmentStartBinding
-
-import den.ter.feature_start_screen.di.DaggerStartComponent
-import den.ter.feature_start_screen.domain.usecase.GetBestAndHotsUseCase
-import den.ter.feature_start_screen.domain.usecase.GetBestUseCase
-import den.ter.feature_start_screen.domain.usecase.GetCartCountUseCase
-import den.ter.feature_start_screen.domain.usecase.GetHotUseCase
 
 
 import den.ter.feature_start_screen.presentation.start.adapters.BestAdapter
 import den.ter.feature_start_screen.presentation.start.adapters.CategoryAdapter
 import den.ter.feature_start_screen.presentation.start.adapters.HotAdapter
 import kotlinx.coroutines.launch
-import moxy.MvpFragment
-import moxy.ktx.moxyPresenter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import javax.inject.Inject
 
-class StartFragment : MvpFragment(), StartView {
+class StartFragment : Fragment() {
 
-
-    @Inject
-    @InjectPresenter
-    lateinit var startPresenter: StartPresenter
-
-    @ProvidePresenter
-    fun provide() = startPresenter
-
-
-    init {
-    val comp = DaggerStartComponent.builder()
-        .coreComponent(DaggerCoreComponent.create())
-        .build()
-    comp.inject(this)
-    }
-
+    private val viewModel: StartViewModel by viewModel<StartViewModel>()
     lateinit var binding: FragmentStartBinding
     lateinit var rv_category: RecyclerView
     lateinit var adapter_category: CategoryAdapter
@@ -76,30 +44,24 @@ class StartFragment : MvpFragment(), StartView {
     lateinit var spinnerSize: Spinner
     var filterIsVisible = true
 
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            binding = FragmentStartBinding.inflate(layoutInflater, container, false)
-        }
+        binding = FragmentStartBinding.inflate(layoutInflater, container, false)
         spinnerBrand = binding.spinnerBrand
         spinnerPrice = binding.spinnerPrice
         spinnerSize = binding.spinnerSize
-
         val spinnerBrandAdapter = ArrayAdapter.createFromResource(
-            context, R.array.brands,
+            requireContext(), R.array.brands,
             spinner_item
         )
         val spinnerPriceAdapter = ArrayAdapter.createFromResource(
-            context, R.array.prices,
+            requireContext(), R.array.prices,
             spinner_item
         )
         val spinnerSizeAdapter = ArrayAdapter.createFromResource(
-            context, R.array.sizes,
+            requireContext(), R.array.sizes,
             spinner_item
         )
         spinnerBrandAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -109,21 +71,21 @@ class StartFragment : MvpFragment(), StartView {
         spinnerPrice.adapter = spinnerPriceAdapter
         spinnerSize.adapter = spinnerSizeAdapter
         rv_best = binding.rvBest
-        adapter_best = BestAdapter(context)
+        adapter_best = BestAdapter(requireContext(), findNavController())
         rv_best.adapter = adapter_best
         rv_category = binding.rvCategory
         adapter_category = CategoryAdapter()
         rv_category.adapter = adapter_category
         rv_hot = binding.rvHot
-        adapter_hot = HotAdapter(context = context)
+        adapter_hot = HotAdapter(requireContext())
         rv_hot.adapter = adapter_hot
         rv_hot.layoutManager = LinearLayoutManager(
-            context, LinearLayoutManager.HORIZONTAL,
+            requireContext(), LinearLayoutManager.HORIZONTAL,
             false
         )
         rv_category.layoutManager =
             LinearLayoutManager(
-                context, LinearLayoutManager.HORIZONTAL,
+                requireContext(), LinearLayoutManager.HORIZONTAL,
                 false
             )
         rv_best.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -139,12 +101,12 @@ class StartFragment : MvpFragment(), StartView {
 
         }
 
-//        binding.geo.setOnClickListener {
-//            goMap()
-//        }
-//        binding.tvCity.setOnClickListener {
-//            goMap()
-//        }
+        binding.geo.setOnClickListener {
+            goMap()
+        }
+        binding.tvCity.setOnClickListener {
+            goMap()
+        }
 
         return binding.root
     }
@@ -158,20 +120,19 @@ class StartFragment : MvpFragment(), StartView {
     private fun init() {
 
 
-//        viewModel.getBest().observe(viewLifecycleOwner, Observer {
-//            if (it.isEmpty()) {
-//                if (isOnline(requireContext())) {
-//                    loadData()
-//                    binding.tvConnectionLost.visibility = View.GONE
-//                } else binding.tvConnectionLost.visibility = View.VISIBLE
-//            } else {
-//                if (isOnline(requireContext())) {
-//                    loadDbData()
-//                    binding.tvConnectionLost.visibility = View.GONE
-//                } else binding.tvConnectionLost.visibility = View.VISIBLE
-//            }
-//        })
-        loadData()
+        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+            if (it.isEmpty()) {
+                if (isOnline(requireContext())) {
+                    loadData()
+                    binding.tvConnectionLost.visibility = View.GONE
+                } else binding.tvConnectionLost.visibility = View.VISIBLE
+            } else {
+                if (isOnline(requireContext())) {
+                    loadDbData()
+                    binding.tvConnectionLost.visibility = View.GONE
+                } else binding.tvConnectionLost.visibility = View.VISIBLE
+            }
+        })
 
 
         binding.filter.setOnClickListener {
@@ -195,93 +156,91 @@ class StartFragment : MvpFragment(), StartView {
                 filterView.visibility = View.GONE
             }
         }
-//        binding.doneButton.setOnClickListener {
-//            if (isOnline(requireContext())) filter()
-//        }
+        binding.doneButton.setOnClickListener {
+            if (isOnline(requireContext())) filter()
+        }
     }
 
     private fun loadData() {
-//        viewModel.getBestsAndHots()
-//        viewModel.resp.observe(viewLifecycleOwner, Observer {
-////            lifecycleScope.launch {
-////                viewModel.insertBest(it.best_seller)
-////                viewModel.insertHot(it.home_store)
-////            }
-//            adapter_best.setList(it.best_seller)
-//            adapter_hot.setList(it.home_store)
-//        })
-//        adapter_category.update()
-//
-//        viewModel.getCart()
-//        viewModel.respCart.observe(viewLifecycleOwner, Observer {
-//            val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-//            val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
-//            badge?.isVisible = true
-//            badge?.number = it.basket.size
-//
-//        })
-        startPresenter.getBestsAndHots()
-        startPresenter.getCartCount()
-  }
+        viewModel.getBestsAndHots()
+        viewModel.resp.observe(viewLifecycleOwner, Observer {
+            lifecycleScope.launch {
+                viewModel.insertBest(it.best_seller)
+                viewModel.insertHot(it.home_store)
+            }
+            adapter_best.setList(it.best_seller)
+            adapter_hot.setList(it.home_store)
+        })
+        adapter_category.update()
 
-//    private fun loadDbData() {
-//        viewModel.getBest().observe(viewLifecycleOwner, Observer {
-//            adapter_best.setList(it)
-//        })
-//        viewModel.getHot().observe(viewLifecycleOwner, Observer {
-//            adapter_hot.setList(it)
-//        })
-//        adapter_category.update()
-//
-//        viewModel.getCart()
-//        viewModel.respCart.observe(viewLifecycleOwner, Observer {
-//            val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-//            val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
-//            badge?.isVisible = true
-//            badge?.number = it.basket.size
-//
-//        })
-//    }
+        viewModel.getCart()
+        viewModel.respCart.observe(viewLifecycleOwner, Observer {
+            val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+            val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
+            badge?.isVisible = true
+            badge?.number = it.basket.size
 
-//    private fun filter() {
-//        val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-//        nav1?.visibility = View.VISIBLE
-//        binding.apply {
-//            rvBest.visibility = View.VISIBLE
-//            tvBest.visibility = View.VISIBLE
-//            tvSeeMore2.visibility = View.VISIBLE
-//            filterView.visibility = View.GONE
-//        }
-//        val brand = spinnerBrand.selectedItem.toString()
-//        val price = spinnerPrice.selectedItem.toString()
-//        val ind = price.indexOf("–")
-//        val minPrice = price.substring(1, ind - 1)
-//        val maxPrice = price.substring(ind + 3, price.length)
-//        filterBest(brand, minPrice, maxPrice, viewModel)
-//    }
+        })
+    }
 
-//    private fun filterBest(
-//        brand: String,
-//        minPrice: String,
-//        maxPrice: String,
-//        viewModel: StartViewModel,
-//    ) {
-//        var name = brand
-//        if (brand == "All") name = "a"
-//        viewModel.getBest().observe(viewLifecycleOwner, Observer {
-//            val listFiltered = it.filter {
-//                (it.title.startsWith(name, true) || it.title.contains(name, true)) &&
-//                        it.price_without_discount >= minPrice.toInt() &&
-//                        it.price_without_discount <= maxPrice.toInt()
-//            }
-//            adapter_best.setList(listFiltered)
-//            if (listFiltered.isNotEmpty()) {
-//                binding.nosuch.visibility = View.GONE
-//            } else {
-//                binding.nosuch.visibility = View.VISIBLE
-//            }
-//        })
-//    }
+    private fun loadDbData() {
+        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+            adapter_best.setList(it)
+        })
+        viewModel.getHot().observe(viewLifecycleOwner, Observer {
+            adapter_hot.setList(it)
+        })
+        adapter_category.update()
+
+        viewModel.getCart()
+        viewModel.respCart.observe(viewLifecycleOwner, Observer {
+            val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+            val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
+            badge?.isVisible = true
+            badge?.number = it.basket.size
+
+        })
+    }
+
+    private fun filter() {
+        val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+        nav1?.visibility = View.VISIBLE
+        binding.apply {
+            rvBest.visibility = View.VISIBLE
+            tvBest.visibility = View.VISIBLE
+            tvSeeMore2.visibility = View.VISIBLE
+            filterView.visibility = View.GONE
+        }
+        val brand = spinnerBrand.selectedItem.toString()
+        val price = spinnerPrice.selectedItem.toString()
+        val ind = price.indexOf("–")
+        val minPrice = price.substring(1, ind - 1)
+        val maxPrice = price.substring(ind + 3, price.length)
+        filterBest(brand, minPrice, maxPrice, viewModel)
+    }
+
+    private fun filterBest(
+        brand: String,
+        minPrice: String,
+        maxPrice: String,
+        viewModel: StartViewModel,
+    ) {
+        var name = brand
+        if (brand == "All") name = "a"
+        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+            val listFiltered = it.filter {
+                (it.title.startsWith(name, true) || it.title.contains(name, true)) &&
+                        it.price_without_discount >= minPrice.toInt() &&
+                        it.price_without_discount <= maxPrice.toInt()
+            }
+            adapter_best.setList(listFiltered)
+            if (listFiltered.isNotEmpty()) {
+                binding.nosuch.visibility = View.GONE
+            } else {
+                binding.nosuch.visibility = View.VISIBLE
+            }
+        })
+    }
 
     private fun isOnline(ctx: Context): Boolean {
         val cm = ctx.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -294,31 +253,10 @@ class StartFragment : MvpFragment(), StartView {
         }
     }
 
-//    private fun goMap() {
-//        val navcon = findNavController()
-//        navcon.navigate(R.id.action_startFragment_to_mapsFragment)
-//    }
-
-    override fun getBestAndHots(resp: BestAndHotModel) {
-        adapter_best.setList(resp.best_seller)
-        adapter_hot.setList(resp.home_store)
-        adapter_category.update()
+    private fun goMap() {
+        val navcon = findNavController()
+        navcon.navigate(R.id.action_startFragment_to_mapsFragment)
     }
-
-    override fun getCartCount(cartModel: CartModel) {
-        val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-        val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
-        badge?.isVisible = true
-        badge?.number = cartModel.basket.size
-    }
-
-    override fun getCartCount(i: Int) {
-        val nav1 = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-        val badge = nav1?.getOrCreateBadge(R.id.cartFragment)
-        badge?.isVisible = true
-        badge?.number = i
-    }
-
 
 }
 
