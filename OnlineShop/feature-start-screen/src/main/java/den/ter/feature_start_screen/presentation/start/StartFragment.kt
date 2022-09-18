@@ -120,7 +120,7 @@ class StartFragment : Fragment() {
     private fun init() {
 
 
-        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+        viewModel.getBest()?.observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()) {
                 if (isOnline(requireContext())) {
                     loadData()
@@ -184,10 +184,10 @@ class StartFragment : Fragment() {
     }
 
     private fun loadDbData() {
-        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+        viewModel.getBest()?.observe(viewLifecycleOwner, Observer {
             adapter_best.setList(it)
         })
-        viewModel.getHot().observe(viewLifecycleOwner, Observer {
+        viewModel.getHot()?.observe(viewLifecycleOwner, Observer {
             adapter_hot.setList(it)
         })
         adapter_category.update()
@@ -227,7 +227,7 @@ class StartFragment : Fragment() {
     ) {
         var name = brand
         if (brand == "All") name = "a"
-        viewModel.getBest().observe(viewLifecycleOwner, Observer {
+        viewModel.getBest()?.observe(viewLifecycleOwner, Observer {
             val listFiltered = it.filter {
                 (it.title.startsWith(name, true) || it.title.contains(name, true)) &&
                         it.price_without_discount >= minPrice.toInt() &&

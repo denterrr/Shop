@@ -1,4 +1,4 @@
-package den.ter.feature_start_screen.data.database.repository
+package den.ter.feature_start_screen.domain.repository
 
 import androidx.lifecycle.LiveData
 import den.ter.core.models.besthotmodel.BestSeller

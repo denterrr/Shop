@@ -22,6 +22,8 @@ import den.ter.feature_start_screen.data.database.dao.BestDao
 import den.ter.feature_start_screen.data.database.dao.HotDao
 import den.ter.feature_start_screen.data.database.repository.BestRepository
 import den.ter.feature_start_screen.data.database.repository.HotRepository
+import den.ter.feature_start_screen.domain.repository.BestRepositoryInterface
+import den.ter.feature_start_screen.domain.repository.HotRepositoryInterface
 import den.ter.feature_start_screen.domain.repository.StartRepositoryInterface
 import org.koin.dsl.module
 
@@ -43,7 +45,7 @@ val dataModule = module {
         BestDatabase.getInstance(context = get()).getBestDao()
     }
 
-    single<BestRepository>{
+    single<BestRepositoryInterface>{
         BestRepository(bestDao = get())
     }
 
@@ -51,7 +53,7 @@ val dataModule = module {
         HotDatabase.getInstance(context = get()).getHotDao()
     }
 
-    single<HotRepository>{
+    single<HotRepositoryInterface>{
         HotRepository(hotDao = get())
     }
 

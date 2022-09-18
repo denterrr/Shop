@@ -54,17 +54,17 @@ class StartViewModel(
         }
     }
 
-    fun getBest() =   getBestUseCase.execute()
+    fun getBest() =   getBestUseCase?.execute()
 
 
     suspend fun insertBest(list: List<BestSeller>) = viewModelScope.launch {
-        getBestUseCase.insert(list)
+        getBestUseCase?.insert(list)
 
     }
 
-    fun getHot() = getHotUseCase.execute()
+    fun getHot() = getHotUseCase?.execute()
 
     suspend fun insertHot(list: List<HomeStore>) = viewModelScope.launch {
-        getHotUseCase.insert(list)
+        getHotUseCase?.insert(list)
     }
 }
